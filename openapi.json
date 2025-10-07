@@ -1,0 +1,1700 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+        "title": "API - Lectura Crítica (CogniCare)",
+        "description": "API REST del módulo **Lectura Crítica** de la plataforma **CogniCare**,\nresponsable de gestionar y ejecutar los entrenamientos cognitivos orientados al fortalecimiento de la comprensión lectora.\n\n---\n### 🎯 Propósito\nEste módulo permite:\n- Que el **Entrenador** inicie y finalice los entrenamientos.\n- Que el **Estudiante** ejecute y registre los resultados de las actividades cognitivas.\n\n---\n### 🔐 Autorización mediante Token de Sesión\nEste módulo **no implementa autenticación local**.\nEl acceso a los endpoints requiere incluir un **token de sesión** emitido por el componente **centralizador de CogniCare**.\n\n**Cabecera requerida:**\n```\nAuthorization: Session \u003CTOKEN_DE_SESION\u003E\n```\n\n**Ejemplo:**\n```\nAuthorization: Session abc123xyz456\n```\n\n---\n### 🧠 Roles\n- **Entrenador** → Gestiona la sesión de entrenamiento (inicio, cierre, control de actividades).\n- **Estudiante** → Ejecuta las actividades de lectura crítica y reporta resultados.\n\n---\n**Nota:** Este servicio forma parte del ecosistema **CogniCare**,\njunto con otros módulos cognitivos como Razonamiento Cuantitativo, Control Inhibitorio y Procrastinación.\n",
+        "license": {
+            "name": "OAS 3.0",
+            "url": "https://swagger.io/specification/"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8080",
+            "description": "Servidor Local - Desarrollo"
+        },
+        {
+            "url": "https://api.cognicare.lifehuni.com",
+            "description": "Servidor de Producción"
+        }
+    ],
+    "security": [
+        {
+            "sessionAuth": []
+        }
+    ],
+    "tags": [
+        {
+            "name": "Gestión de Subniveles",
+            "description": "Controlador encargado de administrar los subniveles asociados a los distintos niveles de las actividades dentro del módulo de Lectura Crítica. Cada subnivel representa una subdivisión de dificultad o tipo de pregunta dentro de un nivel de entrenamiento."
+        },
+        {
+            "name": "Gestión de Sesiones de Entrenamiento",
+            "description": "Controlador encargado de gestionar la creación e inicio de sesiones de entrenamiento cognitivo en el módulo de Lectura Crítica. Cada sesión corresponde al desarrollo de un conjunto de actividades o preguntas que permiten evaluar y fortalecer las habilidades de comprensión lectora del estudiante."
+        },
+        {
+            "name": "Gestión de Componentes",
+            "description": "Endpoints para la consulta de los componentes disponibles en el módulo de Lectura Crítica. Los componentes representan agrupaciones temáticas o unidades cognitivas del entrenamiento."
+        },
+        {
+            "name": "Gestión del Progreso del Estudiante",
+            "description": "Endpoints encargados de consultar el avance o estado actual del estudiante en el módulo de Lectura Crítica. Permite obtener información contextual sobre su progreso dentro de una sesión específica de aprendizaje."
+        },
+        {
+            "name": "Gestión de Niveles",
+            "description": "Endpoints para la consulta de niveles dentro de las actividades del módulo de Lectura Crítica. Cada nivel representa una etapa o dificultad dentro de una actividad cognitiva."
+        },
+        {
+            "name": "Gestión de Estados de Actividad",
+            "description": "Endpoints para la consulta de los diferentes estados que puede tener una actividad dentro del módulo de Lectura Crítica. Estos estados permiten identificar el progreso de un estudiante dentro de un entrenamiento cognitivo."
+        },
+        {
+            "name": "Gestión de Tipos de Pregunta",
+            "description": "Controlador encargado de gestionar los diferentes tipos de pregunta disponibles en el módulo de Lectura Crítica. Los tipos de pregunta determinan la naturaleza del reto cognitivo, por ejemplo: selección múltiple, verdadero/falso, completar, entre otros."
+        },
+        {
+            "name": "Gestión de Unidades de Tiempo",
+            "description": "Controlador encargado de la gestión de las unidades de tiempo empleadas en las sesiones de entrenamiento de Lectura Crítica. Estas unidades pueden representar segundos, minutos o otros intervalos utilizados para medir duración o temporización de actividades."
+        },
+        {
+            "name": "Actividades",
+            "description": "Endpoints relacionados con la gestión y consulta de actividades cognitivas del módulo de Lectura Crítica."
+        },
+        {
+            "name": "Gestión de Preguntas",
+            "description": "Endpoints para consultar las preguntas asociadas a los subniveles dentro del módulo de Lectura Crítica. Cada pregunta está vinculada a un subnivel y contiene las opciones de respuesta correspondientes."
+        },
+        {
+            "name": "Gestión de Opciones de Respuesta",
+            "description": "Endpoints para consultar y validar las opciones de respuesta asociadas a las preguntas del módulo de Lectura Crítica. Cada opción de respuesta representa una posible elección dentro de una pregunta evaluativa."
+        },
+        {
+            "name": "Gestión de Respuestas de Sesión",
+            "description": "Permite registrar y consultar las respuestas emitidas por el estudiante durante una sesión de entrenamiento cognitivo en el módulo de Lectura Crítica. Incluye operaciones de consulta y creación de respuestas asociadas a una sesión específica."
+        }
+    ],
+    "paths": {
+        "/LC/respuestasSesion": {
+            "post": {
+                "tags": [
+                    "Gestión de Respuestas de Sesión"
+                ],
+                "summary": "Registrar una nueva respuesta de sesión",
+                "description": "Guarda una nueva respuesta del estudiante asociada a una sesión y pregunta específicas.",
+                "operationId": "createRespuestaSesion",
+                "requestBody": {
+                    "description": "Objeto que contiene los datos de la respuesta seleccionada por el estudiante.",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RespuestaSesionDomain"
+                            },
+                            "example": {
+                                "preguntaId": "8fcd1234-91d0-41e4-82cb-6e96a22a9b17",
+                                "opcionSeleccionadaId": "1b32dfc7-7c14-4411-8de5-61a0f63a9b71",
+                                "sesionEntrenamientoId": "5e0c45e1-0f22-49f5-9b52-6c95df7d2a1f"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "201": {
+                        "description": "Respuesta de sesión creada exitosamente.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RespuestaSesionDomain"
+                                },
+                                "example": {
+                                    "id": "2d5a7a21-4b89-46c3-b317-8cb62a2a9ef1",
+                                    "preguntaId": "8fcd1234-91d0-41e4-82cb-6e96a22a9b17",
+                                    "opcionSeleccionadaId": "1b32dfc7-7c14-4411-8de5-61a0f63a9b71",
+                                    "esCorrecta": true
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Datos inválidos en la solicitud de creación de la respuesta.",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RespuestaSesionDomain"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error interno al registrar la respuesta de sesión.",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RespuestaSesionDomain"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/LC/opcionesRespuesta/validar/{opcionRespuestaId}": {
+            "post": {
+                "tags": [
+                    "Gestión de Opciones de Respuesta"
+                ],
+                "summary": "Validar opción de respuesta",
+                "description": "Permite verificar si una opción de respuesta seleccionada por el estudiante es correcta o no. Este endpoint retorna `true` si la opción es correcta, o `false` en caso contrario.",
+                "operationId": "validarOpcionRespuesta",
+                "parameters": [
+                    {
+                        "name": "opcionRespuestaId",
+                        "in": "path",
+                        "description": "Identificador único de la opción de respuesta a validar.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "example": "6f8b8b9e-1b3c-4b5f-8a6c-9a0b2f3e4d5f"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Validación realizada exitosamente.",
+                        "content": {
+                            "application/json": {
+                                "example": true
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "El ID proporcionado no tiene un formato válido o no existe.",
+                        "content": {
+                            "application/json": {
+                                "example": false
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error interno al intentar validar la opción de respuesta.",
+                        "content": {
+                            "application/json": {
+                                "example": false
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/LC/iniciar/{idSesion}": {
+            "post": {
+                "tags": [
+                    "Gestión de Sesiones de Entrenamiento"
+                ],
+                "summary": "Iniciar una nueva sesión de entrenamiento",
+                "description": "Crea y registra una nueva sesión de entrenamiento cognitivo a partir de un identificador de sesión base. Este proceso inicializa las condiciones necesarias para que el estudiante inicie su práctica o evaluación.",
+                "operationId": "iniciarNuevaSesionEntrenamiento",
+                "parameters": [
+                    {
+                        "name": "idSesion",
+                        "in": "path",
+                        "description": "Identificador único de la sesión de entrenamiento que se desea iniciar. Generalmente corresponde al ID del plan o bloque de actividades definido para el usuario.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "f37e1a4b-1b93-4b17-90c3-98e7a2bce472"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Sesión de entrenamiento iniciada exitosamente.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SesionEntrenamientoDomain"
+                                },
+                                "example": {
+                                    "id": "9a8e5b0f-b3c2-4e82-9c01-62f6ab2b7a94",
+                                    "usuarioId": "e7a531c4-8ad2-4fa9-89c6-1235e8df001c",
+                                    "fechaInicio": "2025-10-05T22:35:12",
+                                    "estado": "EN_PROGRESO",
+                                    "nivelDificultad": "INTERMEDIO",
+                                    "duracionMinutos": 0
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "El identificador de sesión proporcionado no es válido o no cumple con el formato esperado.",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "error": "El identificador de sesión no es válido o no se encontró el recurso solicitado."
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error interno al intentar iniciar la sesión de entrenamiento.",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "error": "Error interno del servidor al crear la sesión de entrenamiento."
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/LC/unidadesTiempo": {
+            "get": {
+                "tags": [
+                    "Gestión de Unidades de Tiempo"
+                ],
+                "summary": "Obtener todas las unidades de tiempo disponibles",
+                "description": "Devuelve la lista completa de unidades de tiempo registradas en el sistema, las cuales se utilizan para definir la duración de sesiones, pruebas o actividades cognitivas.",
+                "operationId": "getAllUnidadesTiempo",
+                "responses": {
+                    "200": {
+                        "description": "Lista de unidades de tiempo obtenida exitosamente.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnidadTiempoDomain"
+                                },
+                                "example": [
+                                    {
+                                        "id": "f1a9c210-73b4-4b11-9b8d-5df3e2d89b34",
+                                        "nombre": "Minuto",
+                                        "descripcion": "Unidad de tiempo equivalente a 60 segundos."
+                                    },
+                                    {
+                                        "id": "d2f57f92-50ce-42ac-94d7-1a3f7dcab712",
+                                        "nombre": "Segundo",
+                                        "descripcion": "Unidad básica de tiempo utilizada para intervalos cortos."
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error interno del servidor al consultar las unidades de tiempo.",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "error": "Ocurrió un error inesperado al obtener las unidades de tiempo."
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/LC/unidadesTiempo/{id}": {
+            "get": {
+                "tags": [
+                    "Gestión de Unidades de Tiempo"
+                ],
+                "summary": "Obtener una unidad de tiempo por su ID",
+                "description": "Permite consultar los detalles de una unidad de tiempo específica mediante su identificador UUID.",
+                "operationId": "getUnidadTiempoById",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Identificador único de la unidad de tiempo.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "example": "f1a9c210-73b4-4b11-9b8d-5df3e2d89b34"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Unidad de tiempo encontrada correctamente.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnidadTiempoDomain"
+                                },
+                                "example": {
+                                    "id": "f1a9c210-73b4-4b11-9b8d-5df3e2d89b34",
+                                    "nombre": "Minuto",
+                                    "descripcion": "Unidad de tiempo equivalente a 60 segundos."
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No se encontró una unidad de tiempo con el ID proporcionado.",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "mensaje": "No existe una unidad de tiempo con el identificador especificado."
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/LC/unidadesTiempo/nombre/{nombre}": {
+            "get": {
+                "tags": [
+                    "Gestión de Unidades de Tiempo"
+                ],
+                "summary": "Obtener una unidad de tiempo por su nombre",
+                "description": "Permite consultar una unidad de tiempo a partir de su nombre, útil para búsquedas en las que se conoce la denominación textual pero no el UUID.",
+                "operationId": "getUnidadTiempoByNombre",
+                "parameters": [
+                    {
+                        "name": "nombre",
+                        "in": "path",
+                        "description": "Nombre de la unidad de tiempo (por ejemplo: 'Minuto', 'Segundo').",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "Minuto"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Unidad de tiempo encontrada exitosamente.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnidadTiempoDomain"
+                                },
+                                "example": {
+                                    "id": "f1a9c210-73b4-4b11-9b8d-5df3e2d89b34",
+                                    "nombre": "Minuto",
+                                    "descripcion": "Unidad de tiempo equivalente a 60 segundos."
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No se encontró una unidad de tiempo con el nombre proporcionado.",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "mensaje": "No existe una unidad de tiempo con el nombre especificado."
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/LC/tiposPregunta": {
+            "get": {
+                "tags": [
+                    "Gestión de Tipos de Pregunta"
+                ],
+                "summary": "Obtener todos los tipos de pregunta",
+                "description": "Devuelve la lista completa de los tipos de pregunta disponibles en el sistema. Cada tipo define una modalidad de interacción o formato de evaluación dentro de las actividades.",
+                "operationId": "getAllTiposPregunta",
+                "responses": {
+                    "200": {
+                        "description": "Lista de tipos de pregunta obtenida correctamente.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TipoPreguntaDomain"
+                                },
+                                "example": [
+                                    {
+                                        "id": "a12fbc34-6d78-4b1a-934e-2b5f0d6a9c1d",
+                                        "nombre": "Selección múltiple con única respuesta",
+                                        "descripcion": "El estudiante debe seleccionar una única opción correcta."
+                                    },
+                                    {
+                                        "id": "c48de201-31a9-46b0-8e3a-27c7d71a98ff",
+                                        "nombre": "Verdadero o falso",
+                                        "descripcion": "El estudiante debe determinar si una afirmación es verdadera o falsa."
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error interno del servidor al obtener los tipos de pregunta.",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "error": "Error interno al consultar los tipos de pregunta."
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/LC/tiposPregunta/{id}": {
+            "get": {
+                "tags": [
+                    "Gestión de Tipos de Pregunta"
+                ],
+                "summary": "Obtener un tipo de pregunta por su ID",
+                "description": "Devuelve la información completa de un tipo de pregunta identificado por su UUID.",
+                "operationId": "getTipoPreguntaById",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Identificador único del tipo de pregunta.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "example": "a12fbc34-6d78-4b1a-934e-2b5f0d6a9c1d"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Tipo de pregunta encontrado exitosamente.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TipoPreguntaDomain"
+                                },
+                                "example": {
+                                    "id": "a12fbc34-6d78-4b1a-934e-2b5f0d6a9c1d",
+                                    "nombre": "Selección múltiple con única respuesta",
+                                    "descripcion": "El estudiante debe seleccionar una única opción correcta."
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No se encontró un tipo de pregunta con el ID proporcionado.",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "mensaje": "No existe un tipo de pregunta con el identificador especificado."
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/LC/tiposPregunta/nombre/{nombre}": {
+            "get": {
+                "tags": [
+                    "Gestión de Tipos de Pregunta"
+                ],
+                "summary": "Obtener un tipo de pregunta por su nombre",
+                "description": "Permite buscar un tipo de pregunta a partir de su nombre exacto. Es útil cuando se conoce la denominación textual del tipo pero no su identificador UUID.",
+                "operationId": "getTipoPreguntaByNombre",
+                "parameters": [
+                    {
+                        "name": "nombre",
+                        "in": "path",
+                        "description": "Nombre exacto del tipo de pregunta que se desea consultar.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "Verdadero o falso"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Tipo de pregunta encontrado correctamente.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TipoPreguntaDomain"
+                                },
+                                "example": {
+                                    "id": "c48de201-31a9-46b0-8e3a-27c7d71a98ff",
+                                    "nombre": "Verdadero o falso",
+                                    "descripcion": "El estudiante debe determinar si una afirmación es verdadera o falsa."
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No existe un tipo de pregunta con el nombre proporcionado.",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "mensaje": "No se encontró un tipo de pregunta con el nombre especificado."
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/LC/subniveles/{id}": {
+            "get": {
+                "tags": [
+                    "Gestión de Subniveles"
+                ],
+                "summary": "Obtener un subnivel por su ID",
+                "description": "Devuelve la información detallada de un subnivel específico identificado por su UUID.",
+                "operationId": "getSubnivelById",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Identificador único del subnivel a consultar.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "example": "e91c93ad-84a5-40ac-903f-5470ad8e3f6c"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Subnivel encontrado exitosamente.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SubnivelDomain"
+                                },
+                                "example": {
+                                    "id": "e91c93ad-84a5-40ac-903f-5470ad8e3f6c",
+                                    "nombre": "Comprensión literal",
+                                    "descripcion": "Identificación de información explícita en el texto.",
+                                    "nivelId": "b9a83a7e-1a5c-4f3b-9f65-8b3a25f49c3b"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No se encontró un subnivel con el ID proporcionado.",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "mensaje": "Subnivel no encontrado para el ID proporcionado."
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/LC/subniveles/porNivel/{nivelId}": {
+            "get": {
+                "tags": [
+                    "Gestión de Subniveles"
+                ],
+                "summary": "Obtener subniveles por nivel",
+                "description": "Devuelve la lista de subniveles pertenecientes a un nivel específico, identificado por su ID. Los subniveles permiten diferenciar entre distintos grados de dificultad o enfoque dentro del mismo nivel.",
+                "operationId": "getSublevelsByNivel",
+                "parameters": [
+                    {
+                        "name": "nivelId",
+                        "in": "path",
+                        "description": "Identificador único del nivel del cual se desean obtener los subniveles.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "example": "b9a83a7e-1a5c-4f3b-9f65-8b3a25f49c3b"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista de subniveles obtenida exitosamente.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SubnivelDomain"
+                                },
+                                "example": [
+                                    {
+                                        "id": "e91c93ad-84a5-40ac-903f-5470ad8e3f6c",
+                                        "nombre": "Comprensión literal",
+                                        "descripcion": "Identificación de información explícita en el texto.",
+                                        "nivelId": "b9a83a7e-1a5c-4f3b-9f65-8b3a25f49c3b"
+                                    },
+                                    {
+                                        "id": "ca73b201-29a9-4b9b-b7ad-0a4ec74b32da",
+                                        "nombre": "Inferencia",
+                                        "descripcion": "Deducción de información implícita en el texto.",
+                                        "nivelId": "b9a83a7e-1a5c-4f3b-9f65-8b3a25f49c3b"
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "El identificador del nivel no es válido o tiene un formato incorrecto.",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "error": "El ID del nivel proporcionado no tiene un formato válido."
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No se encontró un nivel con el ID especificado o no existen subniveles asociados.",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "mensaje": "No se encontraron subniveles para el nivel con ID proporcionado."
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error interno del servidor al obtener los subniveles.",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "error": "Error interno al consultar los subniveles por nivel."
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/LC/respuestasSesion/{id}": {
+            "get": {
+                "tags": [
+                    "Gestión de Respuestas de Sesión"
+                ],
+                "summary": "Obtener respuesta de sesión por ID",
+                "description": "Retorna una respuesta específica asociada a una sesión de entrenamiento, identificada por su UUID.",
+                "operationId": "getRespuestaSesionById",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Identificador único de la respuesta de sesión a consultar.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "example": "2d5a7a21-4b89-46c3-b317-8cb62a2a9ef1"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Respuesta de sesión obtenida correctamente.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RespuestaSesionDomain"
+                                },
+                                "example": {
+                                    "id": "2d5a7a21-4b89-46c3-b317-8cb62a2a9ef1",
+                                    "preguntaId": "8fcd1234-91d0-41e4-82cb-6e96a22a9b17",
+                                    "opcionSeleccionadaId": "1b32dfc7-7c14-4411-8de5-61a0f63a9b71",
+                                    "esCorrecta": true,
+                                    "tiempoRespuestaSegundos": 12
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No se encontró una respuesta con el ID especificado.",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "error": "No se encontró una respuesta de sesión con el ID proporcionado."
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/LC/respuestasSesion/porSesionEntrenamiento/{sesionEntrenamientoId}": {
+            "get": {
+                "tags": [
+                    "Gestión de Respuestas de Sesión"
+                ],
+                "summary": "Obtener respuestas por sesión de entrenamiento",
+                "description": "Devuelve todas las respuestas registradas durante una sesión de entrenamiento cognitivo específica.",
+                "operationId": "getRespuestasSesionBySesionEntrenamientoId",
+                "parameters": [
+                    {
+                        "name": "sesionEntrenamientoId",
+                        "in": "path",
+                        "description": "UUID de la sesión de entrenamiento cuyos registros de respuesta se desean obtener.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "example": "5e0c45e1-0f22-49f5-9b52-6c95df7d2a1f"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Listado de respuestas obtenido correctamente.",
+                        "content": {
+                            "application/json": {
+                                "example": [
+                                    {
+                                        "id": "2d5a7a21-4b89-46c3-b317-8cb62a2a9ef1",
+                                        "preguntaId": "8fcd1234-91d0-41e4-82cb-6e96a22a9b17",
+                                        "opcionSeleccionadaId": "1b32dfc7-7c14-4411-8de5-61a0f63a9b71",
+                                        "esCorrecta": true
+                                    },
+                                    {
+                                        "id": "4e6c7c32-b5ad-4a6b-bda0-3a72d8e9d7f2",
+                                        "preguntaId": "b3c18a47-0d59-4f7c-99db-452e6b3a62b8",
+                                        "opcionSeleccionadaId": "9b8f2a7a-6e2c-4e52-9c61-32c8c8d123df",
+                                        "esCorrecta": false
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "El identificador de sesión tiene un formato inválido o no cumple los criterios esperados.",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/RespuestaSesionDomain"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No existen respuestas registradas para la sesión indicada.",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/RespuestaSesionDomain"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error interno al intentar recuperar las respuestas de la sesión.",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/RespuestaSesionDomain"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/LC/progresoEstudiante/{idSesion}": {
+            "get": {
+                "tags": [
+                    "Gestión del Progreso del Estudiante"
+                ],
+                "summary": "Obtener progreso del estudiante por sesión",
+                "description": "Recupera la información contextual y el estado de avance del estudiante en una sesión activa. El progreso incluye datos sobre actividades realizadas, niveles alcanzados, resultados parciales, entre otros.",
+                "operationId": "obtenerContextoPorSesion",
+                "parameters": [
+                    {
+                        "name": "idSesion",
+                        "in": "path",
+                        "description": "Identificador único de la sesión del estudiante cuyo progreso se desea consultar.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "example": "c6a4a7a1-3f2d-4e2a-9d78-1d4a82c8a0b7"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Progreso del estudiante obtenido exitosamente.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "string",
+                                    "example": {
+                                        "estudianteId": "e1b1f3a4-12d3-45c2-9b0f-87a5e3b9c2e7",
+                                        "actividadActual": "Comprensión de lectura nivel intermedio",
+                                        "porcentajeCompletado": 75,
+                                        "nivelesCompletados": [
+                                            "Nivel 1",
+                                            "Nivel 2"
+                                        ],
+                                        "estadoSesion": "EN_CURSO"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No se encontró progreso asociado a la sesión especificada.",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "error": "No se encontró progreso para la sesión con id: c6a4a7a1-3f2d-4e2a-9d78-1d4a82c8a0b7",
+                                    "codigo": 404
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error interno del servidor al intentar obtener el progreso del estudiante.",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "error": "Error interno al consultar el progreso del estudiante.",
+                                    "codigo": 500
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/LC/preguntas/{id}": {
+            "get": {
+                "tags": [
+                    "Gestión de Preguntas"
+                ],
+                "summary": "Obtener pregunta por ID",
+                "description": "Recupera la información completa de una pregunta específica mediante su identificador único (UUID).",
+                "operationId": "getPreguntaById",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Identificador único de la pregunta a consultar.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "example": "2e2a8b23-5dbb-4d8a-9a5e-5a0a4e2e11a1"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Pregunta encontrada exitosamente.",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PreguntaDomain"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No se encontró una pregunta con el ID especificado."
+                    }
+                }
+            }
+        },
+        "/LC/preguntas/porSubnivel/{subnivelId}": {
+            "get": {
+                "tags": [
+                    "Gestión de Preguntas"
+                ],
+                "summary": "Obtener preguntas por subnivel",
+                "description": "Permite obtener todas las preguntas vinculadas a un subnivel determinado. Generalmente se utiliza para cargar el conjunto de preguntas de un subnivel cuando un estudiante inicia una actividad.",
+                "operationId": "getQuestionsBySubnivel",
+                "parameters": [
+                    {
+                        "name": "subnivelId",
+                        "in": "path",
+                        "description": "Identificador único del subnivel del cual se desean obtener las preguntas.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "example": "8f23c2e5-35b8-47a0-bc94-1c3cfa3a7a29"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Preguntas obtenidas exitosamente.",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/PreguntaDomain"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "El identificador del subnivel es nulo o tiene un formato inválido.",
+                        "content": {
+                            "application/json": {
+                                "example": []
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No se encontró el subnivel indicado o no existen preguntas asociadas."
+                    },
+                    "500": {
+                        "description": "Error interno al intentar obtener las preguntas del subnivel.",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "error": "Error interno al obtener preguntas por subnivel."
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/LC/opcionesRespuesta/{id}": {
+            "get": {
+                "tags": [
+                    "Gestión de Opciones de Respuesta"
+                ],
+                "summary": "Obtener opción de respuesta por ID",
+                "description": "Recupera la información de una opción de respuesta específica mediante su identificador único (UUID).",
+                "operationId": "getOpcionRespuestaById",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Identificador único de la opción de respuesta a consultar.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "example": "f6a3c0aa-94d0-4ac0-9ff1-8123cbb0b915"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Opción de respuesta encontrada exitosamente.",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OpcionRespuestaDomain"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No se encontró una opción de respuesta con el ID especificado."
+                    }
+                }
+            }
+        },
+        "/LC/opcionesRespuesta/porPregunta/{preguntaId}": {
+            "get": {
+                "tags": [
+                    "Gestión de Opciones de Respuesta"
+                ],
+                "summary": "Obtener opciones de respuesta por pregunta",
+                "description": "Permite recuperar todas las opciones de respuesta vinculadas a una pregunta específica. Este endpoint se utiliza generalmente cuando el estudiante visualiza una pregunta dentro de una actividad.",
+                "operationId": "getOpcionesRespuestaByPreguntaId",
+                "parameters": [
+                    {
+                        "name": "preguntaId",
+                        "in": "path",
+                        "description": "Identificador único de la pregunta de la cual se desean obtener las opciones de respuesta.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "example": "b91c0c1a-6b58-4b2a-92e7-3b95b7b5d5a1"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Opciones de respuesta obtenidas exitosamente.",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/OpcionRespuestaDomain"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No se encontraron opciones de respuesta para la pregunta indicada.",
+                        "content": {
+                            "application/json": {
+                                "example": []
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error interno al intentar obtener las opciones de respuesta.",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "error": "Error interno al obtener opciones de respuesta por pregunta."
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/LC/niveles/{id}": {
+            "get": {
+                "tags": [
+                    "Gestión de Niveles"
+                ],
+                "summary": "Obtener nivel por ID",
+                "description": "Recupera los datos de un nivel específico mediante su identificador único (UUID).",
+                "operationId": "getNivelById",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Identificador único del nivel que se desea consultar.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "example": "9c376b1e-9d9f-4de1-90b7-d7db7c8e1f41"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Nivel encontrado exitosamente.",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NivelDomain"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No existe un nivel con el ID especificado."
+                    }
+                }
+            }
+        },
+        "/LC/niveles/porActividad/{actividadId}": {
+            "get": {
+                "tags": [
+                    "Gestión de Niveles"
+                ],
+                "summary": "Obtener niveles por actividad",
+                "description": "Permite recuperar la lista de niveles asociados a una actividad cognitiva específica. Cada nivel contiene los parámetros de dificultad o progresión relacionados con esa actividad.",
+                "operationId": "getLevelsByActividad",
+                "parameters": [
+                    {
+                        "name": "actividadId",
+                        "in": "path",
+                        "description": "Identificador único de la actividad de la cual se desean obtener los niveles.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "example": "e8b02a91-9e2b-4d53-80a0-2b2e69a1a4f3"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista de niveles obtenida exitosamente.",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/NivelDomain"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "El ID de la actividad no tiene un formato válido o es nulo.",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "error": "El ID de la actividad no puede ser nulo o tiene un formato inválido."
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No se encontró una actividad con el ID proporcionado."
+                    },
+                    "500": {
+                        "description": "Error interno al intentar obtener los niveles.",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "error": "Error inesperado al obtener los niveles por actividad."
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/LC/estadosActividad": {
+            "get": {
+                "tags": [
+                    "Gestión de Estados de Actividad"
+                ],
+                "summary": "Obtener todos los estados de actividad",
+                "description": "Recupera la lista completa de estados que puede tener una actividad (por ejemplo: 'Pendiente', 'En progreso', 'Completada').",
+                "operationId": "getAllEstadosActividad",
+                "responses": {
+                    "200": {
+                        "description": "Lista de estados obtenida exitosamente.",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/EstadoActividadDomain"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error interno al obtener los estados de actividad.",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "error": "Error al obtener los estados de actividad."
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/LC/estadosActividad/{id}": {
+            "get": {
+                "tags": [
+                    "Gestión de Estados de Actividad"
+                ],
+                "summary": "Obtener estado de actividad por ID",
+                "description": "Consulta un estado de actividad específico mediante su identificador único (UUID).",
+                "operationId": "getEstadoActividadById",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Identificador único del estado de actividad.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "example": "b5f61d08-4c62-4e42-b3e3-3f0c77a728e2"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Estado de actividad encontrado.",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/EstadoActividadDomain"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No se encontró un estado con el ID proporcionado."
+                    }
+                }
+            }
+        },
+        "/LC/estadosActividad/nombre/{nombre}": {
+            "get": {
+                "tags": [
+                    "Gestión de Estados de Actividad"
+                ],
+                "summary": "Obtener estado de actividad por nombre",
+                "description": "Permite buscar un estado de actividad utilizando su nombre (por ejemplo, 'En progreso'). Esta operación facilita validar el estado actual de una actividad sin requerir el ID.",
+                "operationId": "getEstadoActividadByNombre",
+                "parameters": [
+                    {
+                        "name": "nombre",
+                        "in": "path",
+                        "description": "Nombre del estado de actividad.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "Completada"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Estado de actividad encontrado exitosamente.",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/EstadoActividadDomain"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No existe un estado con el nombre especificado."
+                    }
+                }
+            }
+        },
+        "/LC/componentes": {
+            "get": {
+                "tags": [
+                    "Gestión de Componentes"
+                ],
+                "summary": "Obtener todos los componentes",
+                "description": "Recupera la lista completa de componentes del módulo Lectura Crítica.",
+                "operationId": "getAllComponents",
+                "responses": {
+                    "200": {
+                        "description": "Lista obtenida exitosamente.",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/ComponenteDomain"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error interno al intentar obtener los componentes.",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "error": "Error al obtener todos los componentes: \u003Cmensaje\u003E"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/LC/componentes/{id}": {
+            "get": {
+                "tags": [
+                    "Gestión de Componentes"
+                ],
+                "summary": "Obtener un componente por ID",
+                "description": "Permite consultar la información básica de un componente específico mediante su identificador único (UUID).",
+                "operationId": "getComponentById",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Identificador único del componente a consultar.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "example": "b8e2b2b5-5e4d-4df0-8d61-6f4b2cc8a2b0"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Componente encontrado exitosamente.",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "type": "string",
+                                    "example": {
+                                        "componentId": "b8e2b2b5-5e4d-4df0-8d61-6f4b2cc8a2b0"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No se encontró un componente con el ID especificado."
+                    }
+                }
+            }
+        },
+        "/LC/actividades/{id}": {
+            "get": {
+                "tags": [
+                    "Actividades"
+                ],
+                "summary": "Obtiene los detalles de una actividad específica",
+                "description": "Consulta los datos completos de una **actividad cognitiva** a partir de su identificador único.",
+                "operationId": "getActividadById",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Identificador único de la actividad",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "example": "98e4c6e1-3a4f-44cf-bbde-5bb9f1e75b8f"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Actividad encontrada correctamente",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ActividadDomain"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No se encontró la actividad solicitada",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ActividadDomain"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/LC/actividades/porComponente/{componenteId}": {
+            "get": {
+                "tags": [
+                    "Actividades"
+                ],
+                "summary": "Obtiene las actividades asociadas a un componente",
+                "description": "Devuelve todas las **actividades cognitivas** pertenecientes al componente indicado.\nEl identificador del componente proviene del módulo Centralizador.\n",
+                "operationId": "getActivitiesByComponent",
+                "parameters": [
+                    {
+                        "name": "componenteId",
+                        "in": "path",
+                        "description": "Identificador único del componente",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "example": "c7b3c2f2-0a6f-4e58-97d0-8dcbb3ef777b"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista de actividades obtenida correctamente",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/ActividadDomain"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "El identificador del componente no es válido",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/ActividadDomain"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No se encontró el componente solicitado",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/ActividadDomain"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error interno al procesar la solicitud",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/ActividadDomain"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "ActividadDomain": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "nombre": {
+                        "type": "string"
+                    },
+                    "orden": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "componente": {
+                        "$ref": "#/components/schemas/ComponenteDomain"
+                    }
+                }
+            },
+            "ComponenteDomain": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "nombre": {
+                        "type": "string"
+                    },
+                    "orden": {
+                        "type": "integer",
+                        "format": "int32"
+                    }
+                }
+            },
+            "EstadoActividadDomain": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "nombre": {
+                        "type": "string"
+                    }
+                }
+            },
+            "NivelDomain": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "nombre": {
+                        "type": "string"
+                    },
+                    "orden": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "actividad": {
+                        "$ref": "#/components/schemas/ActividadDomain"
+                    }
+                }
+            },
+            "OpcionRespuestaDomain": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "nombre": {
+                        "type": "string"
+                    },
+                    "respuestaCorrecta": {
+                        "type": "boolean"
+                    },
+                    "orden": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "cerebros": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "pregunta": {
+                        "$ref": "#/components/schemas/PreguntaDomain"
+                    }
+                }
+            },
+            "PreguntaDomain": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "nombre": {
+                        "type": "string"
+                    },
+                    "textoApoyo": {
+                        "type": "string"
+                    },
+                    "subnivel": {
+                        "$ref": "#/components/schemas/SubnivelDomain"
+                    },
+                    "tipoPregunta": {
+                        "$ref": "#/components/schemas/TipoPreguntaDomain"
+                    }
+                }
+            },
+            "RespuestaSesionDomain": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "intento": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "horaIntento": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "erroresCometidos": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "tiempo": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "ordenIngresado": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "opcionRespuesta": {
+                        "$ref": "#/components/schemas/OpcionRespuestaDomain"
+                    },
+                    "sesionEntrenamiento": {
+                        "$ref": "#/components/schemas/SesionEntrenamientoDomain"
+                    },
+                    "estadoActividad": {
+                        "$ref": "#/components/schemas/EstadoActividadDomain"
+                    },
+                    "unidadTiempo": {
+                        "$ref": "#/components/schemas/UnidadTiempoDomain"
+                    }
+                }
+            },
+            "SesionEntrenamientoDomain": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid"
+                    }
+                }
+            },
+            "SubnivelDomain": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "nombre": {
+                        "type": "string"
+                    },
+                    "orden": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "instruccionBase": {
+                        "type": "string"
+                    },
+                    "tiempoLimite": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "nivel": {
+                        "$ref": "#/components/schemas/NivelDomain"
+                    },
+                    "unidadTiempo": {
+                        "$ref": "#/components/schemas/UnidadTiempoDomain"
+                    }
+                }
+            },
+            "TipoPreguntaDomain": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "nombre": {
+                        "type": "string"
+                    }
+                }
+            },
+            "UnidadTiempoDomain": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "nombre": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "securitySchemes": {
+            "sessionAuth": {
+                "type": "apiKey",
+                "description": "Token de sesión emitido por el componente centralizador (formato: Session \u003CTOKEN\u003E)",
+                "name": "Authorization",
+                "in": "header"
+            }
+        }
+    }
+}
